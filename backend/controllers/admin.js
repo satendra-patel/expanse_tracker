@@ -22,18 +22,27 @@ exports.postuser= async (req,res,next)=>{
     
 }
 
-exports.checkUser=async(req,res,next)=>{
+
+exports.loginUser=async(req,res,next)=>{
     try{
-        const uId=req.params.useremail;
-        console.log(uId);
-        if(User.findByPk(uId)) {
-            console.log('user already exist');
-            
-            res.status(200).json({error:userexist});
+        const useremail=req.body.useremail;
+        const userpassword=req.body.userpassword;
+        console.log(useremail);
+        console.log(userpassword);
+       const user=await User.findAll({where :{ useremail}})
+       {
+        if(user.length>0){
+            if(user[0].userpassword==userpassword){
+                res.status(200).json({success:true,message:"user logged in"});
+            }
+            else{
+                res.status(400).json({success:false,message:"password is wrogn"});
+            }
         }
-       
-
-
+        else{
+            res.status(404).json({success:false,message:"user not found"});
+        }
+       }
     }
     catch(err){
         console.log(err);

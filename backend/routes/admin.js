@@ -12,8 +12,9 @@ router.use(bodyParser.json())
 router.use(bodyParser.urlencoded({ extended: true }));
 
 
-router.post('/login-user',adminController.checkUser);
+
 router.post('/add-user', adminController.postuser);
+router.post('/login-user',adminController.loginUser);
 
 
 module.exports = router;
