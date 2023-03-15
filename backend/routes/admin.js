@@ -12,7 +12,6 @@ router.use(bodyParser.json())
 router.use(bodyParser.urlencoded({ extended: true }));
 
 
-router.get('/add-user',adminController.checkUser)
 
 router.post('/add-user', adminController.postuser)
 
