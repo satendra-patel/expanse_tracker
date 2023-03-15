@@ -28,11 +28,10 @@ exports.checkUser=async(req,res,next)=>{
         console.log(uId);
         if(User.findByPk(uId)) {
             console.log('user already exist');
-            res.status(100).json({error:userexist});
+            
+            res.status(200).json({error:userexist});
         }
-        else{
-            res.status(200).json({message:usercreated});
-        }
+       
 
 
     }
