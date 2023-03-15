@@ -6,7 +6,7 @@ async function signup(event){
             useremail:event.target.useremail.value,
             userpassword:event.target.userpassword.value
         }
-        const response=await axios.post("",userdetails)
+        const response=await axios.post("http://localhost:3000/add-user",userdetails)
 
     }
     catch(err){
