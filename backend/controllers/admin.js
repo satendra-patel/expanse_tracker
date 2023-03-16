@@ -16,6 +16,7 @@ exports.postuser= async (req,res,next)=>{
             console.log(err);
             const data= await User.create({username:username, useremail:useremail, userpassword:hash})
             res.status(201).json({newUserDetail:data})
+        
         })
         
     }

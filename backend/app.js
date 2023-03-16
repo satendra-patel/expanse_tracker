@@ -4,6 +4,7 @@ var app=express();
 var cors=require('cors');
 const sequelize = require('./util/database');
 const User = require('./models/user');
+const Expanse=require('./models/expanse')
 app.use(cors());
 
 const bodyParser = require('body-parser');
