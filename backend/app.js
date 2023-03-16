@@ -1,28 +1,31 @@
-const express = require('express');
-const path = require('path');
-var app=express();
-var cors=require('cors');
-const sequelize = require('./util/database');
+const express  = require('express');
+const app = express();
+const body_parser = require('body-parser');
+const dotenv = require('dotenv');
+dotenv.config();
+
 const User = require('./models/user');
-const Expanse=require('./models/expanse')
+const Expense = require('./models/expense');
+
+User.hasMany(Expense);
+Expense.belongsTo(User);
+
+const userRoutes = require('./routes/user');
+const expenseRoutes = require('./routes/expense');
+
+const data_base = require('./util/database');
+
+const cors = require('cors');
+
+app.use(body_parser.json());
 app.use(cors());
 
-const bodyParser = require('body-parser');
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use('/user', userRoutes);
+app.use('/expense', expenseRoutes);
 
-const adminRoutes = require('./routes/admin');
-
-app.use(adminRoutes);
-
-
-sequelize.sync()
-.then(result=>{
-    console.log(result);
-})
-.catch(err=>{
-    console.log(err);
-})
-
-
-app.listen(3000);
+// data_base.sync({force: true})
+data_base.sync()
+    .then(() => {
+        app.listen('4000');
+    })
+    .catch(err => console.log(err));
