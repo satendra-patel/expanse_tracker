@@ -33,7 +33,7 @@ exports.getExpense = (req, res, next) => {
 
 exports.deleteExpense = (req, res, next) => {
     const id = req.params.id;
-    console.log('id to delete: ', id);
+    // console.log('id to delete: ', id);
     // Expense.findByPk(id, {where: {userId: req.user.id}})
     req.user.getExpenses({where: {id: id}})
         .then(async (expenses) => {
