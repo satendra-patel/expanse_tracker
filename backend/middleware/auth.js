@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 exports.authenticate = (req, res, next) => {
+    console.log('req >>>>>', req);
     try {
         const token = req.header('Authorization');
         console.log('token >>>>>>>>', token);

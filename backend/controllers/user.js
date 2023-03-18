@@ -1,8 +1,10 @@
 const User = require('../models/user');
+const PremiumUser = require('../models/premium-user');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { regexpToText } = require('nodemon/lib/utils');
 const saltRounds = 10;
+const Razorpay = require('razorpay');
 
 exports.addUser = (req, res, next) => {
     const {name, email, password} = req.body;
@@ -66,5 +68,62 @@ exports.logUser = (req, res, next) => {
             });
     } else {
         res.status(400).json({success: false, message: 'bad parameters'});
+    }
+};
+
+exports.makePremium = async (req, res, next) => {
+    try {
+        var instance = new Razorpay({ key_id: 'rzp_test_0klPiE3keLiC4L', key_secret: 'pO8u0U1tXwSVsixtVLzdaMeL' });
+    
+        let order = await instance.orders.create({
+          amount: 5,
+          currency: "INR"
+        });
+
+        await req.user.createPremiumUser({orderId: order.id, status: 'PENDING'});
+    
+        res.status(201).json({
+            success: true,
+            order, 
+            key_id : instance.key_id,
+            orderStatus: 'pending',
+            message: 'order is created'
+        });  
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({success: false, error: error});
+    }  
+};
+
+exports.updateTransactionStatus = async (req, res) => {
+    
+    try {
+        const {order_id, payment_id} = req.body;
+
+        const premiumUser = await PremiumUser.findOne({where: {orderId: order_id}});
+
+        premiumUser.update({paymentId: payment_id, status: 'SUCCESSFUL'})
+            .then(() => {
+                return req.user.update({isPremiumUser: true});
+            })
+            .then(() => {
+                res.status(202).json({success: true, message: 'transaction successful'});
+            })
+            .catch(err => {
+                throw new Error(err);
+            })
+        
+    } catch (error) {
+        console.log(error);
+        res.status(403).json({success: false, message: 'something went wrong', err: error});
+    }
+};
+
+exports.checkMembership = (req, res) => {
+    if(req.user.isPremiumUser === true) {
+        res.status(200).json({message: 'user has Premium Membership'});
+    } else {
+        res.status(400).json({message: 'user does not have Premium Membership'});
     }
 };

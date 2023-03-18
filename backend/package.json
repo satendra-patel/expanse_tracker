@@ -14,6 +14,7 @@
     "mysql2": "^2.3.3",
     "node-modules": "^0.0.1",
     "nodemon": "^2.0.20",
+    "razorpay": "^0.0.0",
     "sequelize": "^6.25.5"
   }
 }

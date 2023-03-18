@@ -6,12 +6,18 @@ dotenv.config();
 
 const User = require('./models/user');
 const Expense = require('./models/expense');
+const PremiumUser = require('./models/premium-user');
 
 User.hasMany(Expense);
 Expense.belongsTo(User);
 
+User.hasOne(PremiumUser);
+PremiumUser.belongsTo(User);
+
 const userRoutes = require('./routes/user');
 const expenseRoutes = require('./routes/expense');
+
+
 
 const data_base = require('./util/database');
 
