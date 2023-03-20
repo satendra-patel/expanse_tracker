@@ -1,8 +1,10 @@
 const Expense = require('../models/expense');
 const User=require('../models/user');
 const {Op}=require('sequelize');
+const Sequelize=require('sequelize');
 
 exports.addExpense = async(req, res, next) => {
+    const t=await Sequelize.Transaction();
     const {amount, description, category} = req.body;
     
     console.log(amount, description, category);
@@ -13,11 +15,12 @@ exports.addExpense = async(req, res, next) => {
             amount: amount,
             description: description,
             category: category
-        });
-
+        },{tranction:t});
+        await t.commit();
         res.status(200).json({success: true, message: 'expense successfully added'});
         
     } catch (error) {
+        await t.rollback();
         res.status(500).json({success: false, message: error});
     }
 };
