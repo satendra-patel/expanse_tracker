@@ -13,8 +13,9 @@
     "jsonwebtoken": "^9.0.0",
     "mysql2": "^2.3.3",
     "node-modules": "^0.0.1",
-    "nodemon": "^2.0.20",
+    "nodemon": "^2.0.21",
     "razorpay": "^0.0.0",
-    "sequelize": "^6.25.5"
+    "sequelize": "^6.25.5",
+    "sib-api-v3-sdk": "^8.5.0"
   }
 }

@@ -18,4 +18,6 @@ router.post('/check-membership', authenticator.authenticate, userController.chec
 
 router.get('/get-expansion/:id',authenticator.authenticate,userController.getExpansion);
 
+router.post('/password/forgotpassword',userController.forgotpassword);
+
 module.exports = router;

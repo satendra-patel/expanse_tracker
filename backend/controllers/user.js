@@ -52,7 +52,7 @@ exports.logUser = (req, res, next) => {
                         return res.status(500).json({success: false, message: err});
                     }
                     if(result == true) {
-                        const token = jwt.sign({userId: user.id, name: user.name,isPremiumUser}, 'archie_jwt_secret_key');
+                        const token = jwt.sign({userId: user.id, name: user.name}, 'archie_jwt_secret_key');
                         res.status(200).json({
                             success: true, 
                             message: 'user found',
@@ -145,7 +145,7 @@ exports.getExpansion = (req,res)=>{
         res.status(400).json({message:'user is not a premium user'})
     }
 };
-exports.forgotpassword=(req,res)=>{
+exports.forgotpassword=async (req,res)=>{
     const email=req.body.email;
     console.log(email);
     if(User.findByPk(email)){
@@ -155,7 +155,7 @@ exports.forgotpassword=(req,res)=>{
         const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
 
         // Set the sender email address
-        sendSmtpEmail.sender = {email: 'test@gmail.com', name: 'ExpenseTracker'};
+        sendSmtpEmail.sender = {email: 'heerat866@gmail.com', name: 'ExpenseTracker'};
 
         // Set the recipient email address
         sendSmtpEmail.to = [{email: email, name: User.name}];
@@ -182,7 +182,7 @@ exports.forgotpassword=(req,res)=>{
         res.status(500).json({success:false,massage:"Entered Mail is wrong"})
     }
     
-}
+};
 
 
 // // Instantiate the Sendinblue API client
