@@ -16,5 +16,6 @@ router.post('/purchase-premium', authenticator.authenticate, userController.make
 
 router.post('/check-membership', authenticator.authenticate, userController.checkMembership);
 
+router.get('/get-expansion/:id',authenticator.authenticate,userController.getExpansion);
 
 module.exports = router;

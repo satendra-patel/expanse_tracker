@@ -12,4 +12,5 @@ router.get('/get-expense', authenticator.authenticate, expenseController.getExpe
 
 router.delete('/delete-expense/:id', authenticator.authenticate, expenseController.deleteExpense);
 
+router.get('/get-leaderboard',authenticator.authenticate,expenseController.getLeaderboardData)
 module.exports = router;

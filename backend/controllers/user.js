@@ -51,7 +51,7 @@ exports.logUser = (req, res, next) => {
                         return res.status(500).json({success: false, message: err});
                     }
                     if(result == true) {
-                        const token = jwt.sign({userId: user.id, name: user.name}, 'archie_jwt_secret_key');
+                        const token = jwt.sign({userId: user.id, name: user.name,isPremiumUser}, 'archie_jwt_secret_key');
                         res.status(200).json({
                             success: true, 
                             message: 'user found',
@@ -73,8 +73,7 @@ exports.logUser = (req, res, next) => {
 
 exports.makePremium = async (req, res, next) => {
     try {
-        var instance = new Razorpay({ key_id: 'rzp_test_0klPiE3keLiC4L', key_secret: 'pO8u0U1tXwSVsixtVLzdaMeL' });
-    
+        var instance = new Razorpay({ key_id: 'rzp_test_0klPiE3keLiC4L', key_secret: 'pO8u0U1tXwSVsixtVLzdaMeL' });    
         let order = await instance.orders.create({
           amount: 5,
           currency: "INR"
@@ -125,5 +124,23 @@ exports.checkMembership = (req, res) => {
         res.status(200).json({message: 'user has Premium Membership'});
     } else {
         res.status(400).json({message: 'user does not have Premium Membership'});
+    }
+};
+
+exports.getExpansion = (req,res)=>{
+    if(req.user.isPremiumUser){
+        const id=req.params.id;
+        User.findByPk(id)
+        .then(user=>{
+            return user.getExpenses();
+        })
+        .then(expenses=>{
+            res.status(200).json({success:true,expenses:expenses});
+        })
+        .catch(err=>{
+            res.status(500).json({success:false,error:err})
+        })
+    }else{
+        res.status(400).json({message:'user is not a premium user'})
     }
 };

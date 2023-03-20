@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../css/premium.css">
 </head>
 <body>
+    <div id="message" style="float:left"></div>
     <form id="tracker-form">
         <label for="amount">Amount:</label>
         <input type="text" class="entry-field" id="amount" required>
@@ -19,6 +20,9 @@
           <option value="fuel">Fuel</option>
           <option value="movie">Movie</option>
           <option value="rent">Rent</option>
+          <option value="grocery">Grocery</option>
+          <option value="medicine">Medicine</option>
+          <option value="clothing">Clothing</option>
           <option value="others">Others</option>
         </select>
         <button type="submit">Submit</button>
@@ -36,6 +40,23 @@
     </div>
     <div style="float: right;" id="premium-div">
         <button id="rzp-button1">Go Premium</button>
+    </div>
+    <div id="leaderboard-div">
+        <h2>Leaderboard</h2>
+        <ul id="leaderboard">
+
+            
+        </ul>
+    </div>
+    <div id="expansion">
+        <div id="expansion-header">
+            <h3>Expense Details</h3>
+            <button id="close-list-btn">X</button>
+
+        </div>
+        <ul class="expense-items">
+            
+        </ul>
     </div>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.1.2/axios.min.js"></script>

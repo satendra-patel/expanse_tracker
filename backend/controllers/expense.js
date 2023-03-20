@@ -1,4 +1,6 @@
 const Expense = require('../models/expense');
+const User=require('../models/user');
+const {Op}=require('sequelize');
 
 exports.addExpense = async(req, res, next) => {
     const {amount, description, category} = req.body;
@@ -47,4 +49,36 @@ exports.deleteExpense = (req, res, next) => {
         .catch(err => {
             res.status(500).json(err);
         });
+};
+exports.getLeaderboardData=(req,res,next)=>{
+    if(req.user.isPremiumUser===true){
+        User.findAll({
+            where:{
+                id:{
+                    [Op.not]:req.user.id
+                }
+            }
+        })
+        .then(async (user)=>{
+            let leaderboardData=[];
+            try{
+                for(let i=0;i<URLSearchParams.length;i++){
+                    let userData={user:users[i]};
+                    let expenses=await users[i].getExpenses();
+                    console.log(expenses)
+                    userData['expenses']=expenses;
+                    leaderboardData.push(userData);
+                }
+            }catch(err){
+                console.log(err);
+                throw new Error(err);
+            }
+            res.status(200).json(leaderboardData);
+        } )
+        .ctach(err=>{
+            res.status(500).json({success:false,error:err})
+        })
+    }else{
+        res.status(403).json({success:false,message:'User is not a premium menber'})
+    }
 };
