@@ -36,20 +36,24 @@ exports.getExpense = (req, res, next) => {
         });
 };
 
-exports.deleteExpense = (req, res, next) => {
+exports.deleteExpense = async (req, res, next) => {
     const id = req.params.id;
+    const t= await Sequelize.Transaction()
     // console.log('id to delete: ', id);
     // Expense.findByPk(id, {where: {userId: req.user.id}})
     req.user.getExpenses({where: {id: id}})
         .then(async (expenses) => {
             const expense = expenses[0];
             if(!expense) {
+                await t.rollback();
                 return res.status(404).json({success: false, message: 'expense does not belong to the user'});
             }
             await expense.destroy();
+            await t.commit()
             res.status(200).json({success: true, message: 'expense successfully deleted'});
         })
         .catch(err => {
+            await .rollback();
             res.status(500).json(err);
         });
 };
