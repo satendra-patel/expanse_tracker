@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize');
+require('dotenv').config();
 
-const data_base = new Sequelize('expanse-tracker', 'root', 'Satendra@12345', {
+const data_base = new Sequelize('expanse-tracker', 'root', process.env.Password, {
     dialect: 'mysql',
     host: 'localhost'
   });

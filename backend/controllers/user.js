@@ -145,50 +145,5 @@ exports.getExpansion = (req,res)=>{
         res.status(400).json({message:'user is not a premium user'})
     }
 };
-exports.forgotpassword=async (req,res)=>{
-    const email=req.body.email;
-    console.log(email);
-    if(User.findByPk(email)){
-        const defaultClient = SibApiV3Sdk.ApiClient.instance;
-        const apiKey = defaultClient.authentications['api-key'];
-        apiKey.apiKey = 'xsmtpsib-239a779b2354654abd654fb6c2f7ed46e6b4c1c20357d14160e11fec72bdd33e-vOSN0gJyThADbqE9';
-        const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
 
-        // Set the sender email address
-        sendSmtpEmail.sender = {email: 'heerat866@gmail.com', name: 'ExpenseTracker'};
-
-        // Set the recipient email address
-        sendSmtpEmail.to = [{email: email, name: User.name}];
-
-        // Set the email subject
-        sendSmtpEmail.subject = 'ForgotPassword';
-
-        // Set the email content (HTML and plain text)
-        sendSmtpEmail.htmlContent = `<html><body><p><form id="changepassword"><label>Enter a new password</label><input type="text"><botton type="submit">Change Password</button></form> </p></body></html>`;
-        sendSmtpEmail.textContent = 'change your password';
-
-        // Send the email using the Sendinblue API client
-        const apiInstance = new SibApiV3Sdk.SMTPApi();
-        apiInstance.sendTransacEmail(sendSmtpEmail)
-        .then(function(data) {
-            console.log('API call successful. Response:', data);
-        })
-        .catch(function(error) {
-            console.error('API call failed. Error:', error);
-        });
-       res.status(200).json({success:true,message:"Mail Sent"})
-
-    }else{
-        res.status(500).json({success:false,massage:"Entered Mail is wrong"})
-    }
-    
-};
-
-
-// // Instantiate the Sendinblue API client
-// const defaultClient = SibApiV3Sdk.ApiClient.instance;
-// const apiKey = defaultClient.authentications['api-key'];
-// apiKey.apiKey = 'YOUR_API_KEY';
-
-// // Create an instance of the Email object
 

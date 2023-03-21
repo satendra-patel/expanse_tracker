@@ -7,6 +7,7 @@ dotenv.config();
 const User = require('./models/user');
 const Expense = require('./models/expense');
 const PremiumUser = require('./models/premium-user');
+const Forgotpassword = require('./models/forgot-password');
 
 User.hasMany(Expense);
 Expense.belongsTo(User);
@@ -14,9 +15,12 @@ Expense.belongsTo(User);
 User.hasOne(PremiumUser);
 PremiumUser.belongsTo(User);
 
+User.hasMany(Forgotpassword);
+Forgotpassword.belongsTo(User);
+
 const userRoutes = require('./routes/user');
 const expenseRoutes = require('./routes/expense');
-
+const passwordRoutes = require('./routes/password');
 
 
 const data_base = require('./util/database');
@@ -28,8 +32,9 @@ app.use(cors());
 
 app.use('/user', userRoutes);
 app.use('/expense', expenseRoutes);
+app.use('/password', passwordRoutes);
 
-// data_base.sync({force: true})
+ //data_base.sync({force: true})
 data_base.sync()
     .then(() => {
         app.listen('4000');
