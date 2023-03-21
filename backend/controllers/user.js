@@ -1,11 +1,12 @@
 const User = require('../models/user');
 const PremiumUser = require('../models/premium-user');
+const Download = require('../models/download');
+
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { regexpToText } = require('nodemon/lib/utils');
 const saltRounds = 10;
 const Razorpay = require('razorpay');
-const SibApiV3Sdk = require('sib-api-v3-sdk');
 
 exports.addUser = (req, res, next) => {
     const {name, email, password} = req.body;
@@ -74,9 +75,10 @@ exports.logUser = (req, res, next) => {
 
 exports.makePremium = async (req, res, next) => {
     try {
-        var instance = new Razorpay({ key_id: 'rzp_test_0klPiE3keLiC4L', key_secret: 'pO8u0U1tXwSVsixtVLzdaMeL' });    
+        var instance = new Razorpay({ key_id: process.env.KEY_ID, key_secret: process.env.KEY_SECRET });
+    
         let order = await instance.orders.create({
-          amount: 5,
+          amount: 50000,
           currency: "INR"
         });
 
@@ -112,7 +114,7 @@ exports.updateTransactionStatus = async (req, res) => {
             })
             .catch(err => {
                 throw new Error(err);
-            })
+            });
         
     } catch (error) {
         console.log(error);
@@ -124,26 +126,39 @@ exports.checkMembership = (req, res) => {
     if(req.user.isPremiumUser === true) {
         res.status(200).json({message: 'user has Premium Membership'});
     } else {
+        res.status(404).json({message: 'user does not have Premium Membership'});
+    }
+};
+
+exports.getExpansion = (req, res) => {
+    if(req.user.isPremiumUser) {
+        const id = req.params.id;
+
+        User.findByPk(id)
+            .then(user => {
+                return user.getExpenses();
+            })
+            .then(expenses => {
+                res.status(200).json({success: true, expenses: expenses});
+            })
+            .catch(err => {
+                res.status(500).json({success: false, error: err});
+            })
+    } else {
         res.status(400).json({message: 'user does not have Premium Membership'});
     }
-};
+}
 
-exports.getExpansion = (req,res)=>{
-    if(req.user.isPremiumUser){
-        const id=req.params.id;
-        User.findByPk(id)
-        .then(user=>{
-            return user.getExpenses();
-        })
-        .then(expenses=>{
-            res.status(200).json({success:true,expenses:expenses});
-        })
-        .catch(err=>{
-            res.status(500).json({success:false,error:err})
-        })
-    }else{
-        res.status(400).json({message:'user is not a premium user'})
+exports.getDownloads = async (req, res) => {
+    if(req.user.isPremiumUser) {
+        try {
+            const downloads = await req.user.getDownloads();
+            console.log(downloads);
+            res.status(200).json({downloads: downloads, success: true});
+        } catch (error) {
+            res.status(500).json({error: error, success: false});
+        }
+    } else {
+        res.status(400).json({message: 'user does not have Premium Membership'});
     }
-};
-
-
+}

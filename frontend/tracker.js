@@ -110,7 +110,7 @@ document.getElementById('rzp-button1').onclick = async function (e) {
             "prefill": {
                 "name": "Test User",
                 "email": "test.user@example.com",
-                "contact": "700349xxxx"
+                "contact": "7003442036"
                 },
             "theme": {
                 "color": "#3399cc"
@@ -128,7 +128,7 @@ document.getElementById('rzp-button1').onclick = async function (e) {
                     })
                     .then(() => {
                         alert('You are a Premium User Now');
-                        applyDarkTheme();
+                        checkForPremium();
                     }).catch(() => {
                         alert('Something went wrong. Try Again!!!');
                     })
@@ -156,10 +156,6 @@ document.getElementById('rzp-button1').onclick = async function (e) {
 
 function applyDarkTheme() {
     const body = document.body;
-    document.getElementById('message').innerHTML="<h4>You Are a Premium User</h4>"
-    document.getElementById('rzp-button1').style="hidden"
-    document.getElementById('premium-div').innerHTML=`<button onclick="download()" id="downloadexpense">Download File</button>`
-
     body.classList.add('dark-mode');
 }
 
@@ -175,8 +171,9 @@ async function checkForPremium() {
         if (response.status === 200) {
             applyDarkTheme();
             addLeaderboard();
-        } else {
-            throw new Error(response);
+            showPreviousDownloads();
+            document.getElementById('downloadexpense').style.display = "block";
+            document.getElementById('prevDownloads-div').style.display = "block";
         }
 
     } catch (error) {
@@ -186,6 +183,7 @@ async function checkForPremium() {
 
 async function addLeaderboard() {
     try {
+        document.getElementById('leaderboard-div').style.display = "block";
         const leaderboard = document.getElementById('leaderboard');
         const response = await axios.get('http://localhost:4000/expense/get-leaderboard', {
             headers: {
@@ -212,6 +210,28 @@ async function addLeaderboard() {
                 <li id="${user.id}">${user.name}-${totalExpense}<button>View Details</button></li>
             `;
         });
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function showPreviousDownloads() {
+    try {
+        const downloads = document.getElementById('downloads');
+        const response = await axios.get('http://localhost:4000/user/get-downloads', {
+            headers: {
+                'Authorization': localStorage.getItem('token')
+            }
+        });
+        // console.log('response---->',response);
+        downloads.innerHTML = '';
+
+        response.data.downloads.forEach(download => {
+            downloads.innerHTML += `<li>
+                <a href="${download.fileUrl}">${download.date}</a>
+            </li>`;
+        });
+
     } catch (error) {
         console.log(error);
     }
@@ -255,14 +275,16 @@ async function expandExpense(id) {
     } catch (error) {
         console.log(error);
     }
-};
+}
+
 function download(){
-    const token = localStorage.getItem('token');
-    axios.get('', { headers: {"Authorization" : token} })
+    axios.get('http://localhost:4000/user/download', 
+        { 
+            headers: {"Authorization" : localStorage.getItem('token')} 
+        }
+    )
     .then((response) => {
         if(response.status === 201){
-            //the bcakend is essentially sending a download link
-            //  which if we open in browser, the file would download
             var a = document.createElement("a");
             a.href = response.data.fileUrl;
             a.download = 'myexpense.csv';
@@ -273,6 +295,11 @@ function download(){
 
     })
     .catch((err) => {
-        showError(err)
+        logErrorToUser(err);  
     });
 }
+
+function logErrorToUser(error) {
+    const err = document.getElementById('error-text');
+    err.innerHTML = error.message;
+};

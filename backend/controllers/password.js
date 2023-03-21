@@ -21,15 +21,16 @@ exports.forgotPassword = async (req, res) => {
             const client = Sib.ApiClient.instance;
 
             const apiKey = client.authentications['api-key'];
-            apiKey.apiKey = 'xsmtpsib-239a779b2354654abd654fb6c2f7ed46e6b4c1c20357d14160e11fec72bdd33e-aVn7hwAcxJNSyR05';
+            apiKey.apiKey = process.env.SENDINBLUE_API_KEY;
+
             const sender = {
-                email: 'heerat866@gmail.com',
-                name: 'Heera Thakur'
+                email: 'archiesaha@gmail.com',
+                name: 'Archisman Saha- Admin'
             }
 
             const recivers = [
                 {
-                    email: user.email
+                    email: 'guitaristarchie@gmail.com'
                 }
             ]
 
@@ -50,7 +51,7 @@ exports.forgotPassword = async (req, res) => {
                     return res.status(200).json({success: true, message: 'reset password link has been sent to your email'});
                 })
                 .catch((error) => {
-                    return res.status(500).json({success:false,error:error});
+                    throw new Error(error);
                 });
             
 
@@ -106,6 +107,8 @@ exports.updatePassword = (req, res) => {
     try {
         const { newpassword } = req.query;
         const  resetpasswordid  = req.params.id;
+        // console.log('new password------------', newpassword);
+        // console.log('resetpassword id---------------', resetpasswordid);
         Forgotpassword.findOne({ where : { id: resetpasswordid }}).then(resetpasswordrequest => {
 
             User.findOne({where: { id : resetpasswordrequest.userId}}).then(user => {
