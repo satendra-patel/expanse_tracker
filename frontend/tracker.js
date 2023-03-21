@@ -157,6 +157,9 @@ document.getElementById('rzp-button1').onclick = async function (e) {
 function applyDarkTheme() {
     const body = document.body;
     document.getElementById('message').innerHTML="<h4>You Are a Premium User</h4>"
+    document.getElementById('rzp-button1').style="hidden"
+    document.getElementById('premium-div').innerHTML=`<button onclick="download()" id="downloadexpense">Download File</button>`
+
     body.classList.add('dark-mode');
 }
 
@@ -252,4 +255,24 @@ async function expandExpense(id) {
     } catch (error) {
         console.log(error);
     }
+};
+function download(){
+    const token = localStorage.getItem('token');
+    axios.get('', { headers: {"Authorization" : token} })
+    .then((response) => {
+        if(response.status === 201){
+            //the bcakend is essentially sending a download link
+            //  which if we open in browser, the file would download
+            var a = document.createElement("a");
+            a.href = response.data.fileUrl;
+            a.download = 'myexpense.csv';
+            a.click();
+        } else {
+            throw new Error(response.data.message)
+        }
+
+    })
+    .catch((err) => {
+        showError(err)
+    });
 }

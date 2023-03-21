@@ -4,7 +4,6 @@ const {Op}=require('sequelize');
 const Sequelize=require('sequelize');
 
 exports.addExpense = async(req, res, next) => {
-    const t=await Sequelize.Transaction();
     const {amount, description, category} = req.body;
     
     console.log(amount, description, category);
@@ -15,12 +14,10 @@ exports.addExpense = async(req, res, next) => {
             amount: amount,
             description: description,
             category: category
-        },{tranction:t});
-        await t.commit();
+        });
         res.status(200).json({success: true, message: 'expense successfully added'});
         
     } catch (error) {
-        await t.rollback();
         res.status(500).json({success: false, message: error});
     }
 };
@@ -38,18 +35,15 @@ exports.getExpense = (req, res, next) => {
 
 exports.deleteExpense = async (req, res, next) => {
     const id = req.params.id;
-    const t= await Sequelize.Transaction()
     // console.log('id to delete: ', id);
     // Expense.findByPk(id, {where: {userId: req.user.id}})
     req.user.getExpenses({where: {id: id}})
         .then(async (expenses) => {
             const expense = expenses[0];
             if(!expense) {
-                await t.rollback();
                 return res.status(404).json({success: false, message: 'expense does not belong to the user'});
             }
             await expense.destroy();
-            await t.commit()
             res.status(200).json({success: true, message: 'expense successfully deleted'});
         })
         .catch(err => {
@@ -82,7 +76,7 @@ exports.getLeaderboardData=(req,res,next)=>{
             }
             res.status(200).json(leaderboardData);
         } )
-        .ctach(err=>{
+        .catch(err=>{
             res.status(500).json({success:false,error:err})
         })
     }else{
