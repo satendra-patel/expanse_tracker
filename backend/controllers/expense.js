@@ -25,12 +25,41 @@ exports.addExpense = async(req, res, next) => {
 };
 
 exports.getExpense = (req, res, next) => {
+    const page = +req.query.page;
+    let totalItems;
+    let lastPage;
+
+    const ITEMS_PER_PAGE = +req.header('rows');
+    console.log('items per page------> ', ITEMS_PER_PAGE)
     
-    req.user.getExpenses()
-        .then(expenses => {
-            res.status(200).json(expenses);
+    req.user.getExpenses({
+        offset: (page - 1)*(ITEMS_PER_PAGE), 
+        limit: ITEMS_PER_PAGE
+      })
+    // Expense.findAll()
+        .then(async (limitedExpenses) => {
+            // res.status(200).json(limitedExpenses);
+            console.log('limited expenses----->', limitedExpenses);
+            totalItems = await Expense.count({where: {userId: req.user.id}});
+
+            lastPage = Math.ceil(totalItems / ITEMS_PER_PAGE);
+            if(lastPage === 0) {
+                lastPage = 1;
+            }
+
+            res.status(200).json({
+                expenses: limitedExpenses,
+                totalExpenses: totalItems,
+                currentPage: page,
+                hasNextPage: (page*ITEMS_PER_PAGE) < totalItems,
+                hasPreviousPage: page > 1,
+                nextPage: page + 1,
+                previousPage: page - 1,
+                lastPage: lastPage
+            })
         })
         .catch(err => {
+            console.log(err);
             res.status(500).json({success: false, message: err});
         });
 };
@@ -38,6 +67,7 @@ exports.getExpense = (req, res, next) => {
 exports.deleteExpense = (req, res, next) => {
     const id = req.params.id;
     console.log('id to delete: ', id);
+    // Expense.findByPk(id, {where: {userId: req.user.id}})
     req.user.getExpenses({where: {id: id}})
         .then(async (expenses) => {
             const expense = expenses[0];
@@ -69,6 +99,7 @@ exports.getLeaderboradData = (req, res, next) => {
                     for(let i = 0; i < users.length; i ++) {
                         let userData = {user: users[i]};
                         let expenses = await users[i].getExpenses();
+                        // console.log(expenses);
                         userData['expenses'] = expenses;
                         leaderboardData.push(userData);
                     }
@@ -117,7 +148,7 @@ function uploadToS3(fileName, data) {
     });
 
     const params = {
-        Bucket: 'expense-tracker', // pass your bucket name
+        Bucket: 'expense-tracker-archie', // pass your bucket name
         Key: fileName, // file will be saved as expense-tracker-archie/<fileName>
         Body: data,
         ACL: 'public-read'

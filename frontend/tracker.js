@@ -22,9 +22,9 @@ trackerFrom.addEventListener('submit', async(e) => {
             }
         });
     
-        const expenses = await fetchExpensesFromBackend();
+        const response = await fetchExpensesFromBackend(1);
 
-        showExpensesOnFrontend(expenses);
+        showExpensesOnFrontend(response.expenses);
 
     } catch (error) {
         console.log(error);
@@ -34,9 +34,19 @@ trackerFrom.addEventListener('submit', async(e) => {
 window.addEventListener('DOMContentLoaded', async () => {
     checkForPremium();
 
-    const expenses = await fetchExpensesFromBackend();
+    // const url = window.location.search;
+    // const page = url.replace('?', '');
+
+    // console.log('page->', page);
+
+    const response = await fetchExpensesFromBackend(1);
+    console.log(response);
+    
+    const expenses = response.expenses;
 
     showExpensesOnFrontend(expenses);
+
+    addPagination(response);
 });
 
 expenseItems.addEventListener('click', async (e) => {
@@ -74,11 +84,17 @@ function showExpensesOnFrontend(expenses) {
     }    
 };
 
-async function fetchExpensesFromBackend() {
+async function fetchExpensesFromBackend(pageNo) {
     try {
-        const response = await axios.get('http://localhost:4000/expense/get-expense', {
+        let rows = localStorage.getItem('rows');
+        if(!rows) {
+            rows = 5;
+        }
+
+        const response = await axios.get(`http://localhost:4000/expense/get-expense/?page=${pageNo}`, {
             headers: {
-                'Authorization': localStorage.getItem('token')
+                'Authorization': localStorage.getItem('token'),
+                'rows': rows
             }
         });
 
@@ -285,6 +301,8 @@ function download(){
     )
     .then((response) => {
         if(response.status === 201){
+            //the bcakend is essentially sending a download link
+            //  which if we open in browser, the file would download
             var a = document.createElement("a");
             a.href = response.data.fileUrl;
             a.download = 'myexpense.csv';
@@ -303,3 +321,62 @@ function logErrorToUser(error) {
     const err = document.getElementById('error-text');
     err.innerHTML = error.message;
 };
+
+function addPagination(response) {
+    const paginationDiv = document.querySelector('.pagination');
+    paginationDiv.innerHTML = '';
+
+    if(response.previousPage!==1 && response.currentPage!==1){
+        paginationDiv.innerHTML += `
+            <button>${1}</button>
+        `;
+        paginationDiv.innerHTML += '<<';
+    }
+
+    if(response.hasPreviousPage) {
+        paginationDiv.innerHTML += `
+            <button>${response.previousPage}</button>
+        `;
+    }
+
+    paginationDiv.innerHTML += `
+        <button class="active">${response.currentPage}</button>
+    `;
+
+    if(response.hasNextPage) {
+        paginationDiv.innerHTML += `
+            <button>${response.nextPage}</button>
+        `;
+    }
+
+    if(response.currentPage !== response.lastPage && response.nextPage!==response.lastPage) {
+        paginationDiv.innerHTML += '>>';
+        paginationDiv.innerHTML += `
+            <button>${response.lastPage}</button>
+        `;
+    }
+}
+
+document.querySelector('.pagination').onclick = async (e) => {
+    e.preventDefault();
+
+    const page = e.target.innerHTML;
+
+    const response = await fetchExpensesFromBackend(page);
+    console.log(response);
+    
+    const expenses = response.expenses;
+
+    showExpensesOnFrontend(expenses);
+
+    addPagination(response);
+}
+
+document.getElementById('row-selector').onchange = (e) => {
+    
+    e.preventDefault();
+    
+    localStorage.setItem('rows', e.target.value);
+
+    window.location.reload();
+}

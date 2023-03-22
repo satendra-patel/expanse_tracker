@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tracker</title>
     <link rel="stylesheet" href="../css/premium.css">
+    <link rel="stylesheet" href="../css/general.css">
 </head>
 <body>
     <form id="tracker-form">
@@ -30,6 +31,21 @@
         <ul id="expense-items">
             
         </ul>
+        <div class="pagination">
+
+        </div>
+        <div id="rows-per-page">
+            <form id="rows-form">
+                <label for="row-selector">No. of expenses per page:</label>
+                <select id="row-selector">
+                    <option selected disabled hidden>Choose here</option>
+                    <option>5</option>
+                    <option>10</option>
+                    <option>20</option>
+                    <option>50</option>
+                </select>
+            </form>
+        </div>
     </div>
     <div id="error">
         <h3 id="error-text"></h3>

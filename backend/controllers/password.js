@@ -25,12 +25,12 @@ exports.forgotPassword = async (req, res) => {
 
             const sender = {
                 email: 'archiesaha@gmail.com',
-                name: 'Archisman Saha- Admin'
+                name: ''
             }
 
             const recivers = [
                 {
-                    email: 'guitaristarchie@gmail.com'
+                    email: user.email
                 }
             ]
 
