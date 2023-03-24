@@ -41,6 +41,6 @@ app.use('/password', passwordRoutes);
 // data_base.sync({force: true})
 data_base.sync()
     .then(() => {
-        app.listen('4000');
+        app.listen(process.env.PORT || 4000);
     })
     .catch(err => console.log(err));
