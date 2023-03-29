@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="../css/general.css">
 </head>
 <body>
+    <div id="message"></div>
     <form id="tracker-form">
         <label for="amount">Amount:</label>
         <input type="text" class="entry-field" id="amount" required>
@@ -71,12 +72,15 @@
     <div id="expansion">
         <div id="expansion-header">
             <h3>Expense Details</h3>
-            <button id="close-list-btn">X</button>
+            <button id="close-list-btn">Click Here For Expense Details</button>
 
         </div>
         <ul class="expense-items">
             
         </ul>
+    </div>
+    <div style="float: right;" id="logout-div">
+        <button onclick="logout()">Logout</button>
     </div>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.1.2/axios.min.js"></script>

@@ -172,6 +172,8 @@ document.getElementById('rzp-button1').onclick = async function (e) {
 
 function applyDarkTheme() {
     const body = document.body;
+    // document.getElementById('rzp-button1').style=hidden;
+    // document.getElementById('message').innerHTML=`Premium user`
     body.classList.add('dark-mode');
 }
 
@@ -292,6 +294,10 @@ async function expandExpense(id) {
         console.log(error);
     }
 }
+function logout(){
+    localStorage.clear();        
+    window.location.href = 'login.html';
+}
 
 function download(){
     axios.get('http://localhost:4000/user/download', 
@@ -301,8 +307,6 @@ function download(){
     )
     .then((response) => {
         if(response.status === 201){
-            //the bcakend is essentially sending a download link
-            //  which if we open in browser, the file would download
             var a = document.createElement("a");
             a.href = response.data.fileUrl;
             a.download = 'myexpense.csv';

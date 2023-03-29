@@ -4,16 +4,16 @@ const Download = require('../models/download');
 
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { regexpToText } = require('nodemon/lib/utils');
-const saltRounds = 10;
-const Razorpay = require('razorpay');
 
-exports.addUser = (req, res, next) => {
+const Razorpay=require('razorpay');
+const saltRounds = 10;
+
+exports.addUser = (req, res) => {
     const {name, email, password} = req.body;
+
 
     if(name.length > 0 && email.length > 0 && password.length > 0) {
         bcrypt.hash(password, saltRounds, function(error, hash) {
-            // Store hash in your password DB.
             User.create(
                 {
                     name: name, 
@@ -36,7 +36,7 @@ exports.addUser = (req, res, next) => {
     }
 };
 
-exports.logUser = (req, res, next) => {
+exports.logUser = (req, res) => {
     const {email, password} = req.body;
 
     if(email.length > 0 && password.length > 0) {
@@ -53,7 +53,7 @@ exports.logUser = (req, res, next) => {
                         return res.status(500).json({success: false, message: err});
                     }
                     if(result == true) {
-                        const token = jwt.sign({userId: user.id, name: user.name}, 'archie_jwt_secret_key');
+                        const token = jwt.sign({userId: user.id, name: user.name},'Satendra');
                         res.status(200).json({
                             success: true, 
                             message: 'user found',
@@ -160,5 +160,15 @@ exports.getDownloads = async (req, res) => {
         }
     } else {
         res.status(400).json({message: 'user does not have Premium Membership'});
+    }
+}
+exports.logOutUser=async(req,res)=>{
+    try{
+        console.log(req.user);
+        res.clearCookie("jwt");
+        await req.user.save();
+    }catch(error){
+        res.status(500)
+        .json({message:'user cannot logOut'})
     }
 }

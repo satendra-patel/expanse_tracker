@@ -99,14 +99,14 @@ exports.getLeaderboradData = (req, res, next) => {
                     for(let i = 0; i < users.length; i ++) {
                         let userData = {user: users[i]};
                         let expenses = await users[i].getExpenses();
-                        // console.log(expenses);
+                     
                         userData['expenses'] = expenses;
                         leaderboardData.push(userData);
                     }
                 } catch (error) {
                     throw new Error(error);
                 }
-                // console.log(leaderboardData);
+                
                 res.status(200).json(leaderboardData);
             })
             .catch(err => {
@@ -123,10 +123,10 @@ exports.downloadExpense = async (req, res) => {
         try {
             const expenses = await req.user.getExpenses();
             console.log(expenses);
-                                                //  file name  //                           //  data    //
+                                                                         
             const fileUrl = await uploadToS3(`${req.user.id}_${new Date()}_expenses.csv`, JSON.stringify(expenses));
 
-            // console.log('fileUrl>>>>>', fileUrl);
+            
             await req.user.createDownload({fileUrl: fileUrl, date: new Date()});
 
             res.status(201).json({fileUrl: fileUrl, success: true});
@@ -148,8 +148,8 @@ function uploadToS3(fileName, data) {
     });
 
     const params = {
-        Bucket: 'expense-tracker-archie', // pass your bucket name
-        Key: fileName, // file will be saved as expense-tracker-archie/<fileName>
+        Bucket: 'expense-tracker-archie', 
+        Key: fileName, 
         Body: data,
         ACL: 'public-read'
     };
@@ -160,7 +160,7 @@ function uploadToS3(fileName, data) {
             if (s3Err){
                 reject(s3Err);
             } else {
-                // console.log(`File uploaded successfully at ${response.Location}`);
+                
                 resolve(response.Location);
             }
         });

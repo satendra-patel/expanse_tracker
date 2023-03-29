@@ -1,0 +1,22 @@
+{
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js",
+    "start-server": "node app.js"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1342.0",
+    "bcrypt": "^5.1.0",
+    "body-parser": "^1.20.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "mysql2": "^2.3.3",
+    "node-modules": "^0.0.1",
+    "nodemon": "^2.0.21",
+    "razorpay": "^0.0.0",
+    "sequelize": "^6.25.5",
+    "sib-api-v3-sdk": "^8.5.0"
+  }
+}

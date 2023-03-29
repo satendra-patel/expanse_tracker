@@ -2,6 +2,8 @@ const express  = require('express');
 const app = express();
 const body_parser = require('body-parser');
 const dotenv = require('dotenv');
+const helmet=require('helmet');
+const compression=require('compression');
 dotenv.config();
 
 const User = require('./models/user');
@@ -26,13 +28,15 @@ const userRoutes = require('./routes/user');
 const expenseRoutes = require('./routes/expense');
 const passwordRoutes = require('./routes/password');
 
-
+app.use(helmet());
+app.use(compression());
 const data_base = require('./util/database');
 
 const cors = require('cors');
 
 app.use(body_parser.json());
 app.use(cors());
+
 
 app.use('/user', userRoutes);
 app.use('/expense', expenseRoutes);

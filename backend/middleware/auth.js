@@ -7,7 +7,7 @@ exports.authenticate = (req, res, next) => {
         const token = req.header('Authorization');
         console.log('token >>>>>>>>', token);
 
-        const tokenUser = jwt.verify(token, 'archie_jwt_secret_key');
+        const tokenUser = jwt.verify(token, 'Satendra');
         console.log('user >>>>>>>', tokenUser);
 
         User.findByPk(tokenUser.userId)

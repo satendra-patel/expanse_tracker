@@ -24,7 +24,7 @@ exports.forgotPassword = async (req, res) => {
             apiKey.apiKey = process.env.SENDINBLUE_API_KEY;
 
             const sender = {
-                email: 'archiesaha@gmail.com',
+                email: 'admin@gmail.com',
                 name: ''
             }
 
@@ -41,7 +41,7 @@ exports.forgotPassword = async (req, res) => {
                     subject: 'Please reset your password via this link',
                     sender,
                     to: recivers,
-                    // textContent: `Cules Coding will teach you how to become a {{params.role}} developer.`,
+                  
                     htmlContent: `
                         <a href="http://localhost:4000/password/resetpassword/${id}">Reset password</a>
                     `
@@ -55,7 +55,7 @@ exports.forgotPassword = async (req, res) => {
                 });
             
 
-            //send mail
+        
         }else {
             
             throw new Error('User doesnt exist');
@@ -107,15 +107,12 @@ exports.updatePassword = (req, res) => {
     try {
         const { newpassword } = req.query;
         const  resetpasswordid  = req.params.id;
-        // console.log('new password------------', newpassword);
-        // console.log('resetpassword id---------------', resetpasswordid);
+    
         Forgotpassword.findOne({ where : { id: resetpasswordid }}).then(resetpasswordrequest => {
 
             User.findOne({where: { id : resetpasswordrequest.userId}}).then(user => {
                 // console.log('userDetails', user)
                 if(user) {
-                    //encrypt the password
-
                     const saltRounds = 10;
                     bcrypt.genSalt(saltRounds, function(err, salt) {
                         if(err){
